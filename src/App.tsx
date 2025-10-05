@@ -3,9 +3,12 @@ import React, { useMemo, useState } from "react";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { PublicProfile } from "@/screens/PublicProfile";
 import { PreviewScreen } from "@/screens/PreviewScreen";
-import { HomeScreen } from "@/screens/HomeScreen";
+import HomeScreen from "@/screens/HomeScreen";
 import { SectionEditor } from "@/screens/SectionEditor";
-import { WelcomeScreen } from "@/screens/WelcomeScreen";
+import PrinciplesScreen from "@/screens/PrinciplesScreen";
+import CommunicationScreen from "@/screens/CommunicationScreen";
+import DecisionMakingScreen from "@/screens/DecisionMakingScreen";
+import Login from "@/screens/Login";
 import type { ProfileData } from "@/types/profile";
 
 const emptyProfile: ProfileData = {
@@ -56,25 +59,26 @@ const exampleProfile: ProfileData = {
   guardrails: "No silent misalignment, no hidden decisions, no values compromises."
 };
 
+
+type Screen = "login" | "welcome" | "home" | "section" | "preview" | "public";
+
 const App: React.FC = () => {
-  const [currentScreen, setCurrentScreen] = useState<"welcome" | "home" | "section" | "preview" | "public">("welcome");
+  const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [profileData] = useState<ProfileData>(emptyProfile);
+  const [profileData, setProfileData] = useState<ProfileData>(emptyProfile);
   const previewData = useMemo(() => exampleProfile, []);
 
   return (
     <AuthProvider>
-      {currentScreen === "welcome" && (
-        <WelcomeScreen
-          onContinue={() => setCurrentScreen("home")}
-          onPreviewExample={() => setCurrentScreen("preview")}
-          onSkip={() => setCurrentScreen("home")}
-        />
+      {currentScreen === "login" && (
+        <Login onSkip={() => setCurrentScreen("home")} />
       )}
+
+
 
       {currentScreen === "home" && (
         <HomeScreen
-          onOpenSection={(sectionId) => {
+          onOpenSection={(sectionId: string) => {
             setActiveSection(sectionId);
             setCurrentScreen("section");
           }}
@@ -82,7 +86,30 @@ const App: React.FC = () => {
         />
       )}
 
-      {currentScreen === "section" && activeSection && (
+      {currentScreen === "section" && activeSection === "principles" && (
+        <PrinciplesScreen
+          onContinue={() => setCurrentScreen("home")}
+          onPreviewExample={() => setCurrentScreen("preview")}
+          onSkip={() => setCurrentScreen("home")}
+        />
+      )}
+      {currentScreen === "section" && activeSection === "communication" && (
+        <CommunicationScreen
+          profile={profileData}
+          onChange={setProfileData}
+          onExit={() => setCurrentScreen("home")}
+          onContinue={() => setCurrentScreen("home")}
+        />
+      )}
+      {currentScreen === "section" && activeSection === "decision-making" && (
+        <DecisionMakingScreen
+          profile={profileData}
+          onChange={setProfileData}
+          onExit={() => setCurrentScreen("home")}
+          onContinue={() => setCurrentScreen("home")}
+        />
+      )}
+      {currentScreen === "section" && activeSection && !["principles", "communication", "decision-making"].includes(activeSection) && (
         <SectionEditor
           sectionId={activeSection}
           onBack={() => setCurrentScreen("home")}
