@@ -1,67 +1,109 @@
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export interface LoginProps {
   onSkip?: () => void;
+  onPreviewExample?: () => void;
 }
 
-export default function Login({ onSkip }: LoginProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+export default function Login({ onSkip, onPreviewExample }: LoginProps) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
   return (
-    <div className="bg-[#f8f9fa] box-border content-stretch flex flex-col gap-[32px] items-start pb-0 pt-[268px] px-[343.5px] relative size-full min-h-screen w-full" data-name="Login" data-node-id="18:787">
-      <div className="content-stretch flex h-[36px] items-start relative shrink-0 w-full" data-name="Heading 1" data-node-id="18:788">
-        <p className="basis-0 font-inter font-medium grow leading-[36px] min-h-px min-w-px not-italic relative shrink-0 text-[30px] text-center text-neutral-950 tracking-[0.3955px]">Work With Me</p>
-      </div>
-      <div className="bg-white border border-blue-100 border-solid h-[389px] relative rounded-[16px] shrink-0 w-full max-w-[672px]" data-name="Container" data-node-id="18:790">
-        <div className="absolute content-stretch flex h-[19px] items-start left-[33px] top-[36.5px] w-[425.516px]" data-name="Bold Text" data-node-id="18:791">
-          <p className="font-inter font-bold leading-[26px] not-italic relative shrink-0 text-[16px] text-gray-800 text-nowrap tracking-[-0.3125px] whitespace-pre">Understand yourself. Help others work better with you.</p>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-16">
+      <div className="w-full max-w-2xl">
+        <header className="mb-6 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0A66C2]">
+            Work With Me
+          </p>
+          <h1 className="mt-4 text-3xl font-semibold text-slate-900">
+            Understand yourself. Help others work better with you.
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-slate-600">
+            AI made teamwork faster, but it didn&apos;t make understanding people easier. This space helps you reflect on how you work best — so your teammates and tools can adapt to you, not the other way around.
+          </p>
+        </header>
+
+        <div className="rounded-2xl border border-blue-100 bg-white p-8 shadow-sm">
+          <form
+            className="grid gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+            }}
+          >
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid gap-2">
+                <label className="text-sm font-medium text-slate-600" htmlFor="first-name">
+                  First name
+                </label>
+                <input
+                  className="h-11 rounded-xl border border-transparent bg-slate-100 px-3 text-sm text-slate-800 outline-none transition focus:border-[#0A66C2] focus:bg-white"
+                  id="first-name"
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(event) => setFirstName(event.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <label className="text-sm font-medium text-slate-600" htmlFor="last-name">
+                  Last name
+                </label>
+                <input
+                  className="h-11 rounded-xl border border-transparent bg-slate-100 px-3 text-sm text-slate-800 outline-none transition focus:border-[#0A66C2] focus:bg-white"
+                  id="last-name"
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(event) => setLastName(event.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium text-slate-600" htmlFor="email">
+                Email
+              </label>
+              <input
+                className="h-11 rounded-xl border border-transparent bg-slate-100 px-3 text-sm text-slate-800 outline-none transition focus:border-[#0A66C2] focus:bg-white"
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="h-11 rounded-xl bg-[#0A66C2] text-sm font-semibold text-white transition hover:bg-[#004182]"
+            >
+              Continue
+            </button>
+
+            <div className="flex flex-col gap-2 text-sm font-medium text-[#0A66C2] sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                className="font-medium text-slate-500 transition hover:text-slate-700"
+                onClick={onSkip}
+              >
+                Skip for now
+              </button>
+              <button
+                type="button"
+                className="transition hover:text-[#004182]"
+                onClick={onPreviewExample}
+              >
+                Preview example profile
+              </button>
+            </div>
+          </form>
         </div>
-        <form className="absolute border-t border-gray-200 box-border content-stretch flex flex-col gap-[16px] h-[265px] items-start left-[33px] pb-0 pt-[25px] px-0 top-[91px] w-[606px]" data-name="Container" data-node-id="18:793" onSubmit={e => { e.preventDefault(); /* handle submit here */ }}>
-          <div className="gap-[16px] grid grid-cols-2 h-[64px] w-full" data-name="Container" data-node-id="18:794">
-            <div className="flex flex-col gap-[8px]" data-name="Container" data-node-id="18:795">
-              <label className="h-[20px] text-[14px] text-gray-500 font-inter font-normal leading-[20px] tracking-[-0.1504px]">First name</label>
-              <input
-                className="bg-[#f3f3f5] border border-transparent h-[36px] rounded-[10px] px-[12px] py-[4px] w-full text-[14px] text-[#717182] font-inter"
-                type="text"
-                placeholder="First name"
-                value={firstName}
-                onChange={e => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-[8px]" data-name="Container" data-node-id="18:800">
-              <label className="h-[20px] text-[14px] text-gray-500 font-inter font-normal leading-[20px] tracking-[-0.1504px]">Last name</label>
-              <input
-                className="bg-[#f3f3f5] border border-transparent h-[36px] rounded-[10px] px-[12px] py-[4px] w-full text-[14px] text-[#717182] font-inter"
-                type="text"
-                placeholder="Last name"
-                value={lastName}
-                onChange={e => setLastName(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-[8px] h-[64px] w-full" data-name="Container" data-node-id="18:805">
-            <label className="h-[20px] text-[14px] text-gray-500 font-inter font-normal leading-[20px] tracking-[-0.1504px]">Email</label>
-            <input
-              className="bg-[#f3f3f5] border border-transparent h-[36px] rounded-[10px] px-[12px] py-[4px] w-full text-[14px] text-[#717182] font-inter"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="bg-[#0a66c2] h-[36px] rounded-[10px] w-full relative mt-2">
-            <span className="font-inter font-medium leading-[20px] text-[14px] text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">Continue</span>
-          </button>
-          <div className="flex h-[28px] items-center justify-between w-full mt-2">
-            <button type="button" className="h-[20px] w-[79.969px] text-[14px] text-gray-500 font-inter font-normal leading-[20px] tracking-[-0.1504px]" onClick={onSkip}>Skip for now</button>
-            <button type="button" className="h-[20px] w-[109.125px] text-[14px] text-[#0a66c2] font-inter font-normal leading-[20px] tracking-[-0.1504px]">Preview Example</button>
-          </div>
-        </form>
       </div>
     </div>
   );

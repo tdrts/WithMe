@@ -4,6 +4,7 @@ export interface CollaborationChannel {
 }
 
 export interface ProfileData {
+  name: string;
   coreValues: string[];
   strengths: string[];
   learningStyle: string;

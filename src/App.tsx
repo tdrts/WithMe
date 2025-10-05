@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 
-import { AuthProvider } from "@/providers/AuthProvider";
+// import { AuthProvider } from "@/providers/AuthProvider";
+import { ToastProvider } from "./components/ToastProvider";
 import { PublicProfile } from "@/screens/PublicProfile";
 import { PreviewScreen } from "@/screens/PreviewScreen";
 import HomeScreen from "@/screens/HomeScreen";
@@ -12,6 +13,7 @@ import Login from "@/screens/Login";
 import type { ProfileData } from "@/types/profile";
 
 const emptyProfile: ProfileData = {
+  name: "",
   coreValues: [],
   strengths: [],
   learningStyle: "",
@@ -35,6 +37,7 @@ const emptyProfile: ProfileData = {
 
 const exampleProfile: ProfileData = {
   ...emptyProfile,
+  name: "Tudor Tise",
   coreValues: ["Integrity", "Curiosity", "Craft", "Empathy"],
   strengths: ["Strategy", "Product Thinking", "Storytelling"],
   learningStyle: "I learn best through hands-on experimentation paired with short written summaries.",
@@ -69,12 +72,10 @@ const App: React.FC = () => {
   const previewData = useMemo(() => exampleProfile, []);
 
   return (
-    <AuthProvider>
+    <ToastProvider>
       {currentScreen === "login" && (
-        <Login onSkip={() => setCurrentScreen("home")} />
+        <Login onSkip={() => setCurrentScreen("home")} onPreviewExample={() => setCurrentScreen("preview")} />
       )}
-
-
 
       {currentScreen === "home" && (
         <HomeScreen
@@ -83,15 +84,12 @@ const App: React.FC = () => {
             setCurrentScreen("section");
           }}
           onPreviewProfile={() => setCurrentScreen("preview")}
+          profile={profileData}
         />
       )}
 
       {currentScreen === "section" && activeSection === "principles" && (
-        <PrinciplesScreen
-          onContinue={() => setCurrentScreen("home")}
-          onPreviewExample={() => setCurrentScreen("preview")}
-          onSkip={() => setCurrentScreen("home")}
-        />
+        <PrinciplesScreen />
       )}
       {currentScreen === "section" && activeSection === "communication" && (
         <CommunicationScreen
@@ -121,7 +119,7 @@ const App: React.FC = () => {
       )}
 
       {currentScreen === "public" && <PublicProfile data={profileData} />}
-    </AuthProvider>
+    </ToastProvider>
   );
 };
 

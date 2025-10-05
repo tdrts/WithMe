@@ -1,8 +1,10 @@
 import React from "react";
+import { asset } from "@/lib/assets";
 import type { ProfileData } from "@/types/profile";
+import { useToast } from "../components/ToastProvider";
 
-const imgIcon = "http://localhost:3845/assets/40c010260d2c47ca1d646c5d15bf66c0b846d122.svg";
-const imgIcon1 = "http://localhost:3845/assets/c7958ead632a1d755ce91f9e69d372b3e3021773.svg";
+const imgIcon = asset("40c010260d2c47ca1d646c5d15bf66c0b846d122.svg");
+const imgIcon1 = asset("c7958ead632a1d755ce91f9e69d372b3e3021773.svg");
 
 interface PreviewScreenProps {
   data: ProfileData;
@@ -10,137 +12,58 @@ interface PreviewScreenProps {
 }
 
 export const PreviewScreen: React.FC<PreviewScreenProps> = ({ data, onClose }) => {
+  const { showToast } = useToast();
+
+  // Generate export text and LLM prompt as in HomeScreen
+  const exportText = `WORK WITH ME — Tudor Tise\n\nPRINCIPLES\n• Core values: ${data.coreValues?.join(", ") || "—"}\n• Strengths: ${data.strengths?.join('; ') || "—"}\n• Learning style: ${data.learningStyle || "—"}\n• Motivators: ${data.motivators || "—"}\n• Drainers: ${data.drainers || "—"}\n• How I recharge: ${data.recharge || "—"}\n• Great day: ${data.greatDay || "—"}\n• Great week: ${data.greatWeek || "—"}\n• Focus hours: ${data.focusHours || "—"}\n\nCOMMUNICATION\n• Channels:\n${data.channels && data.channels.length > 0 ? data.channels.map((c: any) => `  - I prefer ${c.channel} for ${c.use}`).join("\n") : "  —"}\n• How I give feedback: ${data.giveFeedback || "—"}\n• How I like to receive feedback: ${data.receiveFeedback || "—"}\n• How I deal with conflict: ${data.conflict || "—"}\n\nDECISION MAKING\n• My decision style: ${data.decisionStyle || "—"}\n• Decision speed:\n  - Decide quickly on: ${data.decideQuickly || "—"}\n  - Need more time/alignment for: ${data.needTime || "—"}\n• Risk appetite & guardrails:\n  - Comfortable experimenting with: ${data.experimentWith || "—"}\n  - Careful when these could be affected: ${data.guardrails || "—"}\n\nLast updated: ${new Date().toLocaleDateString()}\n`;
+
+  const llmPrompt = `SYSTEM:\nYou are a helpful teammate who adapts communication and feedback to a person's \"How I work\" profile. Follow their preferences strictly.\n\nUSER PROFILE (STRUCTURED):\n- Core values: ${data.coreValues?.join(", ") || "—"}\n- Strengths: ${data.strengths?.join('; ') || "—"}\n- Learning style: ${data.learningStyle || "—"}\n- Motivators: ${data.motivators || "—"}\n- Drainers: ${data.drainers || "—"}\n- Recharge: ${data.recharge || "—"}\n- Great day: ${data.greatDay || "—"}\n- Great week: ${data.greatWeek || "—"}\n- Focus hours: ${data.focusHours || "—"}\n\nCOMMUNICATION PREFERENCES:\n- Channels:\n${data.channels && data.channels.length > 0 ? data.channels.map((c: any) => `  - I prefer ${c.channel} for ${c.use}`).join("\n") : "  —"}\n- Give feedback: ${data.giveFeedback || "—"}\n- Receive feedback: ${data.receiveFeedback || "—"}\n- Conflict: ${data.conflict || "—"}\n\nDECISION STYLE:\n- Style: ${data.decisionStyle || "—"}\n- Decide quickly on: ${data.decideQuickly || "—"}\n- Need more time/alignment for: ${data.needTime || "—"}\n- Comfortable experimenting with: ${data.experimentWith || "—"}\n- Guardrails (be careful when…): ${data.guardrails || "—"}\n\nTASK:\nGiven the profile above, rewrite the following message/document to match their preferences (tone, channel, length, structure). If content is missing or conflicts with guardrails, flag it and propose safe alternatives.`;
   return (
-    <div className="bg-white content-stretch flex flex-col items-start relative size-full" data-name="Preview" data-node-id="18:579">
-      <div className="bg-[#f8f9fa] min-h-screen w-full relative" data-name="PublicProfile" data-node-id="18:580">
-        {/* Top bar */}
-        <div className="flex gap-4 items-center bg-[#0a66c2] h-[56px] pl-[231.5px] pr-0 py-0 w-full" data-node-id="18:581">
-          <button className="flex items-center h-[32px] rounded-[10px] px-4" onClick={onClose}>
-            <img src={imgIcon} alt="Back" className="w-4 h-4 mr-2" />
-            <span className="text-white text-[14px] font-medium">Back to edit</span>
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <div className="border-b border-blue-200 bg-[#E6F0FB] py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6">
+          <span className="text-sm font-semibold text-[#0A66C2]">Private preview — only you can see this</span>
+          <button className="text-sm font-semibold text-[#0A66C2]" onClick={onClose}>
+            Exit preview
           </button>
-          <span className="text-white text-[16px] font-normal">Private preview — only you can see this</span>
         </div>
-        {/* Main content */}
-        <div className="absolute flex flex-col gap-6 left-[167.5px] pt-[32px] px-[32px] top-[56px] w-[1024px]" data-node-id="18:589">
-          {/* Profile Card */}
-          <div className="bg-white border border-blue-100 rounded-[16px] p-[33px] flex items-center gap-8 w-full" data-node-id="18:590">
-            <div className="bg-[#0a66c2] rounded-full flex items-center justify-center w-20 h-20 text-white text-2xl font-semibold">
-              {data?.coreValues?.[0]?.slice(0,2).toUpperCase() ?? "WW"}
+      </div>
+      <div className="mx-auto max-w-5xl px-6 py-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <header className="flex items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0A66C2] text-2xl font-semibold text-white">
+              {data?.name?.slice(0, 1) ?? "W"}
             </div>
             <div>
-              <h1 className="text-[30px] font-normal text-neutral-950">{data?.name ?? "Your Name"}</h1>
-              <p className="text-[14px] text-gray-500">Last updated: {new Date().toLocaleDateString()}</p>
+              <h1 className="text-2xl font-semibold text-slate-900">Your Work With Me profile</h1>
+              <p className="text-sm text-slate-600">Last updated just now</p>
             </div>
-          </div>
-          {/* Principles Section */}
-          <div className="bg-white border border-gray-200 rounded-[16px] w-full p-8" data-node-id="18:599">
-            <h2 className="text-[24px] text-neutral-950 mb-2">Principles</h2>
-            <p className="text-[14px] text-gray-500 mb-6">Values, strengths, and what makes me tick</p>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Core values</h3>
-                <p className="text-[16px] text-neutral-950">{data.coreValues?.join(", ") || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Strengths</h3>
-                <ul className="list-disc pl-5 text-[16px] text-neutral-950">
-                  {data.strengths?.length ? data.strengths.map((s, i) => <li key={i}>{s}</li>) : <li>—</li>}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Learning style</h3>
-                <p className="text-[16px] text-neutral-950">{data.learningStyle || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Motivators</h3>
-                <p className="text-[16px] text-neutral-950">{data.motivators || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Drainers</h3>
-                <p className="text-[16px] text-neutral-950">{data.drainers || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">How I recharge</h3>
-                <p className="text-[16px] text-neutral-950">{data.recharge || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Great day</h3>
-                <p className="text-[16px] text-neutral-950">{data.greatDay || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Great week</h3>
-                <p className="text-[16px] text-neutral-950">{data.greatWeek || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Focus hours</h3>
-                <p className="text-[16px] text-neutral-950">{data.focusHours || "—"}</p>
-              </div>
-            </div>
-          </div>
-          {/* Communication Section */}
-          <div className="bg-white border border-gray-200 rounded-[16px] w-full p-8" data-node-id="18:665">
-            <h2 className="text-[24px] text-neutral-950 mb-2">Communication</h2>
-            <p className="text-[14px] text-gray-500 mb-6">How I collaborate and share feedback</p>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Channels</h3>
-                <ul className="list-disc pl-5 text-[16px] text-neutral-950">
-                  {data.channels?.length ? data.channels.map((c, i) => <li key={i}>I prefer {c.channel} for {c.use}</li>) : <li>—</li>}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">How I give feedback</h3>
-                <p className="text-[16px] text-neutral-950">{data.giveFeedback || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">How I like to receive feedback</h3>
-                <p className="text-[16px] text-neutral-950">{data.receiveFeedback || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">How I deal with conflict</h3>
-                <p className="text-[16px] text-neutral-950">{data.conflict || "—"}</p>
-              </div>
-            </div>
-          </div>
-          {/* Decision Making Section */}
-          <div className="bg-white border border-gray-200 rounded-[16px] w-full p-8" data-node-id="18:701">
-            <h2 className="text-[24px] text-neutral-950 mb-2">Decision Making</h2>
-            <p className="text-[14px] text-gray-500 mb-6">How I think through choices and trade-offs</p>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">My decision style</h3>
-                <p className="text-[16px] text-neutral-950">{data.decisionStyle || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Decide quickly on</h3>
-                <p className="text-[16px] text-neutral-950">{data.decideQuickly || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Need more time/alignment for</h3>
-                <p className="text-[16px] text-neutral-950">{data.needTime || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Comfortable experimenting with</h3>
-                <p className="text-[16px] text-neutral-950">{data.experimentWith || "—"}</p>
-              </div>
-              <div>
-                <h3 className="text-[#0a66c2] text-[18px]">Careful when these could be affected</h3>
-                <p className="text-[16px] text-neutral-950">{data.guardrails || "—"}</p>
-              </div>
-            </div>
-          </div>
-          {/* Copy buttons */}
-          <div className="flex gap-4 mt-4">
-            <button className="bg-white border border-[#bedbff] rounded-[10px] h-[36px] flex items-center px-4">
-              <img src={imgIcon1} alt="Copy" className="w-4 h-4 mr-2" />
-              <span className="text-[#0a66c2] text-[14px] font-medium">Copy as text</span>
+          </header>
+          <section className="mt-8 space-y-6 text-sm leading-relaxed text-slate-700">
+            <p>Profile preview content will render here once the editor is complete.</p>
+          </section>
+          <footer className="mt-8 flex flex-wrap items-center gap-3">
+            <button
+              className="flex items-center gap-2 rounded-[10px] border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-[#0A66C2] hover:bg-blue-50"
+              onClick={() => {
+                navigator.clipboard.writeText(exportText);
+                showToast("Copied as text");
+              }}
+            >
+              <img src={imgIcon} alt="copy" className="size-4" />
+              Copy as text
             </button>
-            <button className="bg-white border border-[#bedbff] rounded-[10px] h-[36px] flex items-center px-4">
-              <img src={imgIcon1} alt="Copy" className="w-4 h-4 mr-2" />
-              <span className="text-[#0a66c2] text-[14px] font-medium">Copy LLM context</span>
+            <button
+              className="flex items-center gap-2 rounded-[10px] bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white hover:bg-[#004182]"
+              onClick={() => {
+                navigator.clipboard.writeText(llmPrompt);
+                showToast("LLM context copied");
+              }}
+            >
+              <img src={imgIcon1} alt="AI" className="size-4" />
+              Copy LLM context
             </button>
-          </div>
+          </footer>
         </div>
       </div>
     </div>

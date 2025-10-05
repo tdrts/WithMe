@@ -1,22 +1,36 @@
 
 import React, { useState } from "react";
 import ShareModal from "../components/ShareModal";
-const imgIcon = "http://localhost:3845/assets/f8a6f7340b79fe6e21dc80d9f5d1f5ebef58958f.svg";
-const imgIcon1 = "http://localhost:3845/assets/c03bb0b4cb43d3219bf5634208db55763fe86e36.svg";
-const imgIcon2 = "http://localhost:3845/assets/68f3aa154402aeb68c72a62e12e5bf77bd821e90.svg";
-const imgIcon3 = "http://localhost:3845/assets/79dc94bc2402dd0a76064cab2454d188a054d5ff.svg";
+import ExportModal from "../components/ExportModal";
+import { asset } from "@/lib/assets";
+import EmailSignatureModal from "../components/EmailSignatureModal";
+import type { ProfileData } from "../types/profile";
+const imgIcon = asset("f8a6f7340b79fe6e21dc80d9f5d1f5ebef58958f.svg");
+const imgIcon1 = asset("c03bb0b4cb43d3219bf5634208db55763fe86e36.svg");
+const imgIcon2 = asset("68f3aa154402aeb68c72a62e12e5bf77bd821e90.svg");
+const imgIcon3 = asset("79dc94bc2402dd0a76064cab2454d188a054d5ff.svg");
 
-interface HomeScreenProps {
+
+type HomeScreenProps = {
   onOpenSection: (sectionId: string) => void;
   onPreviewProfile: () => void;
-}
+  profile: ProfileData;
+};
 
-export default function HomeScreen({ onOpenSection, onPreviewProfile }: HomeScreenProps) {
+export default function HomeScreen({ onOpenSection, onPreviewProfile, profile }: HomeScreenProps) {
   const [shareOpen, setShareOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [emailSigOpen, setEmailSigOpen] = useState(false);
+
+  // --- Export text generation ---
+  const exportText = `WORK WITH ME — Tudor Tise\n\nPRINCIPLES\n• Core values: ${profile.coreValues?.join(", ") || "—"}\n• Strengths: ${profile.strengths?.join('; ') || "—"}\n• Learning style: ${profile.learningStyle || "—"}\n• Motivators: ${profile.motivators || "—"}\n• Drainers: ${profile.drainers || "—"}\n• How I recharge: ${profile.recharge || "—"}\n• Great day: ${profile.greatDay || "—"}\n• Great week: ${profile.greatWeek || "—"}\n• Focus hours: ${profile.focusHours || "—"}\n\nCOMMUNICATION\n• Channels:\n${profile.channels && profile.channels.length > 0 ? profile.channels.map((c: any) => `  - I prefer ${c.channel} for ${c.use}`).join("\n") : "  —"}\n• How I give feedback: ${profile.giveFeedback || "—"}\n• How I like to receive feedback: ${profile.receiveFeedback || "—"}\n• How I deal with conflict: ${profile.conflict || "—"}\n\nDECISION MAKING\n• My decision style: ${profile.decisionStyle || "—"}\n• Decision speed:\n  - Decide quickly on: ${profile.decideQuickly || "—"}\n  - Need more time/alignment for: ${profile.needTime || "—"}\n• Risk appetite & guardrails:\n  - Comfortable experimenting with: ${profile.experimentWith || "—"}\n  - Careful when these could be affected: ${profile.guardrails || "—"}\n\nLast updated: ${new Date().toLocaleDateString()}\n`;
+
+  const llmPrompt = `SYSTEM:\nYou are a helpful teammate who adapts communication and feedback to a person's \"How I work\" profile. Follow their preferences strictly.\n\nUSER PROFILE (STRUCTURED):\n- Core values: ${profile.coreValues?.join(", ") || "—"}\n- Strengths: ${profile.strengths?.join('; ') || "—"}\n- Learning style: ${profile.learningStyle || "—"}\n- Motivators: ${profile.motivators || "—"}\n- Drainers: ${profile.drainers || "—"}\n- Recharge: ${profile.recharge || "—"}\n- Great day: ${profile.greatDay || "—"}\n- Great week: ${profile.greatWeek || "—"}\n- Focus hours: ${profile.focusHours || "—"}\n\nCOMMUNICATION PREFERENCES:\n- Channels:\n${profile.channels && profile.channels.length > 0 ? profile.channels.map((c: any) => `  - I prefer ${c.channel} for ${c.use}`).join("\n") : "  —"}\n- Give feedback: ${profile.giveFeedback || "—"}\n- Receive feedback: ${profile.receiveFeedback || "—"}\n- Conflict: ${profile.conflict || "—"}\n\nDECISION STYLE:\n- Style: ${profile.decisionStyle || "—"}\n- Decide quickly on: ${profile.decideQuickly || "—"}\n- Need more time/alignment for: ${profile.needTime || "—"}\n- Comfortable experimenting with: ${profile.experimentWith || "—"}\n- Guardrails (be careful when…): ${profile.guardrails || "—"}\n\nTASK:\nGiven the profile above, rewrite the following message/document to match their preferences (tone, channel, length, structure). If content is missing or conflicts with guardrails, flag it and propose safe alternatives.`;
+
   return (
-    <>
+    <div>
       <div className="bg-white relative size-full" data-name="Home" data-node-id="1:118">
-      <div className="absolute bg-[#f8f9fa] box-border content-stretch flex flex-col gap-[32px] h-[1052px] items-start left-0 pb-0 pt-[32px] px-[263.5px] top-0 w-[1359px]" data-name="HomeScreen" data-node-id="1:119">
+        <div className="absolute bg-[#f8f9fa] box-border content-stretch flex flex-col gap-[32px] h-[1052px] items-start left-0 pb-0 pt-[32px] px-[263.5px] top-0 w-[1359px]" data-name="HomeScreen" data-node-id="1:119">
         <div className="content-stretch flex flex-col gap-[16px] h-[378px] items-start relative shrink-0 w-full" data-name="Container" data-node-id="1:120">
           <div className="content-stretch flex h-[36px] items-center justify-between relative shrink-0 w-full" data-name="Container" data-node-id="1:121">
             <div className="h-[36px] relative shrink-0 w-[182.289px]" data-name="Heading 1" data-node-id="1:122">
@@ -32,11 +46,11 @@ export default function HomeScreen({ onOpenSection, onPreviewProfile }: HomeScre
                   <img alt="" className="block max-w-none size-[16px] ml-[11px] mr-[14px]" src={imgIcon} />
                   <span className="font-inter font-medium leading-[20px] not-italic text-[#0a66c2] text-[14px] text-nowrap tracking-[-0.1504px]">Share</span>
                 </button>
-                <button className="bg-white border border-[#bedbff] border-solid h-[32px] relative rounded-[10px] shrink-0 w-[95.344px] flex items-center" data-name="Button" data-node-id="1:133" type="button">
+                <button className="bg-white border border-[#bedbff] border-solid h-[32px] relative rounded-[10px] shrink-0 w-[95.344px] flex items-center" data-name="Button" data-node-id="1:133" type="button" onClick={() => setExportOpen(true)}>
                   <img alt="" className="block max-w-none size-[16px] ml-[11px] mr-[14px]" src={imgIcon1} />
                   <span className="font-inter font-medium leading-[20px] not-italic text-[#0a66c2] text-[14px] text-nowrap tracking-[-0.1504px]">Export</span>
                 </button>
-                <button className="bg-white border border-[#bedbff] border-solid h-[32px] relative rounded-[10px] shrink-0 flex-1 min-w-0 flex items-center" data-name="Button" data-node-id="1:139" type="button">
+                <button className="bg-white border border-[#bedbff] border-solid h-[32px] relative rounded-[10px] shrink-0 flex-1 min-w-0 flex items-center" data-name="Button" data-node-id="1:139" type="button" onClick={() => setEmailSigOpen(true)}>
                   <img alt="" className="block max-w-none size-[16px] ml-[11px] mr-[14px]" src={imgIcon2} />
                   <span className="font-inter font-medium leading-[20px] not-italic text-[#0a66c2] text-[14px] text-nowrap tracking-[-0.1504px]">Email signature</span>
                 </button>
@@ -155,7 +169,9 @@ export default function HomeScreen({ onOpenSection, onPreviewProfile }: HomeScre
         </div>
       </div>
       </div>
-      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} />
-    </>
+  <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} />
+  <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} text={exportText} llmPrompt={llmPrompt} />
+  <EmailSignatureModal open={emailSigOpen} onClose={() => setEmailSigOpen(false)} signatureUrl={`workwith.me/tudor-tise`} />
+    </div>
   );
 }
